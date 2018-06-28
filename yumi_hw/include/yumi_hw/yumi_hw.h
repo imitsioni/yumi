@@ -1,6 +1,11 @@
 #ifndef __YUMI_HW_H
 #define __YUMI_HW_H
 
+// STL
+#include <iostream>
+#include <memory>
+#include <ros/ros.h>
+
 // boost
 #include <boost/scoped_ptr.hpp>
 
@@ -12,6 +17,7 @@
 #include <hardware_interface/robot_hw.h>
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
+#include <hardware_interface/force_torque_sensor_interface.h>
 #include <transmission_interface/transmission_info.h>
 #include <transmission_interface/transmission_parser.h>
 #include <joint_limits_interface/joint_limits.h>
@@ -27,6 +33,11 @@
 #include <kdl/chaindynparam.hpp> //this to compute the gravity verctor
 #include <kdl_parser/kdl_parser.hpp>
 
+// Optoforce FT sensors
+#include "geometry_msgs/WrenchStamped.h"
+#include "etherdaq_driver/etherdaq_driver.h"
+
+
 /**
   * Base class for yumi hw interface. Extended later for gazebo and for real robot over rapid
   */
@@ -34,7 +45,7 @@
 class YumiHW : public hardware_interface::RobotHW
 {
     public:
-		YumiHW() 
+		YumiHW()
 		{
 			n_joints_ = 14;
 		}
@@ -59,7 +70,7 @@ class YumiHW : public hardware_interface::RobotHW
 		/* Control strategy get/set */
 		ControlStrategy getControlStrategy(){ return current_strategy_;};
 		void setControlStrategy( ControlStrategy strategy){current_strategy_ = strategy;};
-		
+
 
 		/* RobotHW primitives */
 		/* This functions must be implemented depending on the outlet (Real, Gazebo, etc.) */
@@ -97,7 +108,7 @@ class YumiHW : public hardware_interface::RobotHW
 		/* Joint limits */
 		std::vector<double>
 			joint_lower_limits_,
-			joint_upper_limits_; 
+			joint_upper_limits_;
 
 		/* Joint state */
 		std::vector<double>
@@ -105,7 +116,7 @@ class YumiHW : public hardware_interface::RobotHW
 			joint_position_prev_,
 			joint_velocity_,
 			joint_effort_;
-		
+
 		/* Joint commands */
 		std::vector<double>
 			joint_position_command_,
@@ -113,7 +124,7 @@ class YumiHW : public hardware_interface::RobotHW
 
 		/* Set all members to default values */
 		void reset();
-		
+
 		/* Transmissions in this plugin's scope */
 		std::vector<transmission_interface::TransmissionInfo> transmissions_;
 
@@ -125,6 +136,18 @@ class YumiHW : public hardware_interface::RobotHW
 		KDL::JntArray joint_position_kdl_, gravity_effort_;
 		KDL::Vector gravity_;
 		*/
+
+		float optodaq_pub_rate_hz;
+
+		hardware_interface::ForceTorqueSensorInterface force_torque_interface_;
+		double robot_force_l_[3], robot_torque_l_[3], robot_force_r_[3], robot_torque_r_[3];
+		std::string optodaq_frame_id_l, optodaq_frame_id_r;
+		optoforce_etherdaq_driver::EtherDAQDriver* etherdaq_driver_l;
+		optoforce_etherdaq_driver::EtherDAQDriver* etherdaq_driver_r;
+		geometry_msgs::WrenchStamped optodaq_data_l;
+		geometry_msgs::WrenchStamped optodaq_data_r;
+		void readFTsensors();
+		boost::mutex ft_data_mutex_r_, ft_data_mutex_l_;
 
     private:
 

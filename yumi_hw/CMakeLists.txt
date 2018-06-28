@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 2.8.3)
 project(yumi_hw)
 
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
-add_definitions(-DROS=1)           # build using ROS libraries 
-add_definitions(-DLINUXSOCKETS=1)  # build using LINUX SOCKETS libraries 
+add_definitions(-DROS=1)           # build using ROS libraries
+add_definitions(-DLINUXSOCKETS=1)  # build using LINUX SOCKETS libraries
 
 find_package(Boost REQUIRED COMPONENTS system thread QUIET)
 
-find_package(abb_egm_interface QUIET) 
+find_package(abb_egm_interface QUIET)
 find_package(abb_rws_interface QUIET)
-LIST(APPEND CATKIN_DEPENDS_LIST 
+LIST(APPEND CATKIN_DEPENDS_LIST
   cmake_modules
   control_toolbox
   controller_interface
@@ -25,12 +25,13 @@ LIST(APPEND CATKIN_DEPENDS_LIST
   urdf
   simple_message
   message_generation
+  optoforce_etherdaq_driver
 )
 
 if (abb_rws_interface_FOUND)
   message("--   ABB RWS library found!")
 
-  LIST(APPEND CATKIN_DEPENDS_LIST 
+  LIST(APPEND CATKIN_DEPENDS_LIST
     abb_rws_interface
   )
   LIST(APPEND SOURCEFILES
@@ -42,7 +43,7 @@ if (abb_rws_interface_FOUND)
     message("--   ABB EGM library found!")
     message("--   All dependencies satisfied. The robot hardware interfaces (via EGM and RWS) will be built")
 
-    LIST(APPEND CATKIN_DEPENDS_LIST 
+    LIST(APPEND CATKIN_DEPENDS_LIST
       abb_egm_interface
     )
     LIST(APPEND SOURCEFILES
