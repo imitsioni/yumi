@@ -31,13 +31,21 @@ egm:
   # Maximum admitted joint speed change [deg/s]:
   # Note: Should not be set higher than the lowest max speed [deg/s],
   # out of all the axis max speeds (found in the robot's data sheet).
+<<<<<<< f2844df69dc2244ff64e7eeaf5311c98429e1c42
   max_speed_deviation: 20.0
+=======
+  max_speed_deviation: 200.0
+>>>>>>> Added proper filter parameters for my work. Remove Gazebo default ns
 
   # Condition time [s]
   condition_time: 500.0
 
   # Duration for ramp in [s].
-  ramp_in_time: 0.1
+  ramp_in_time: 0.025
 
   # Position correction gain of the EGM controller.
+<<<<<<< f2844df69dc2244ff64e7eeaf5311c98429e1c42
   pos_corr_gain: 0.0
+=======
+  pos_corr_gain: 0.2
+>>>>>>> Added proper filter parameters for my work. Remove Gazebo default ns
